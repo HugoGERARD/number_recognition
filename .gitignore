@@ -12,6 +12,10 @@ __pycache__/
 # Jupyter
 *.nbconvert.ipynb
 
+# Downloaded datasets
+data/
+models/*.pth
+
 # Build
 build/
 dist/
