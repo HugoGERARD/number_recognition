@@ -47,13 +47,13 @@ Ce wheel est volumineux. Le pilote NVIDIA doit être installé ; le CUDA Toolkit
 Après avoir entraîné le modèle et exécuté la cellule qui enregistre `models/digit_cnn.pth`, lance l'API dans un terminal :
 
 ```powershell
-.[0m\.venv\Scripts\python.exe -m number_recognition.serve
+	.\.venv\Scripts\python.exe -m number_recognition.serve
 ```
 
 Dans un second terminal, démarre le front statique :
 
 ```powershell
-.[0m\.venv\Scripts\python.exe -m http.server 5500 --directory frontend
+	.\.venv\Scripts\python.exe -m http.server 5500 --directory frontend
 ```
 
 Ouvre `http://127.0.0.1:5500` pour dessiner. Le front envoie un PNG à `POST /predict` sur l'API (`http://127.0.0.1:8000`). `http://127.0.0.1:8000/docs` reste disponible pour explorer l'API directement avec Swagger.
