@@ -11,6 +11,7 @@ Projet d'apprentissage ML autour de MNIST : explorer les données, entraîner un
 - `src/number_recognition/drawing_app.py` : petite interface Tkinter de dessin, utile comme prototype local.
 - `src/number_recognition/api.py` : API HTTP FastAPI avec vérification de santé et prédiction par upload.
 - `src/number_recognition/serve.py` : démarrage local de l'API avec le checkpoint entraîné.
+- `frontend/` : page web statique avec canvas et prédiction en direct via l'API.
 - `notebooks/01_train_mnist.ipynb` : exploration, choix des paramètres, entraînement et analyse.
 - `notebooks/02_inference_drawing.ipynb` : chargement du modèle et ouverture du prototype de dessin.
 - `tests/` : tests unitaires des parties réutilisables.
@@ -41,20 +42,23 @@ Ce wheel est volumineux. Le pilote NVIDIA doit être installé ; le CUDA Toolkit
 3. Exécute la cellule de sauvegarde. Le checkpoint est écrit dans `models/digit_cnn.pth`.
 4. Ouvre `notebooks/02_inference_drawing.ipynb` et exécute ses cellules. La fenêtre Tkinter utilise le même prétraitement et le même CNN que le futur backend.
 
-## Découvrir l'API backend
+## Lancer le backend et le front local
 
-Après avoir entraîné et sauvegardé le modèle, démarre l'API depuis la racine du dépôt :
+Après avoir entraîné le modèle et exécuté la cellule qui enregistre `models/digit_cnn.pth`, lance l'API dans un terminal :
 
 ```powershell
-python -m number_recognition.serve
+.[0m\.venv\Scripts\python.exe -m number_recognition.serve
 ```
 
-L'API écoute sur `http://127.0.0.1:8000`. Ouvre `http://127.0.0.1:8000/docs` pour essayer les routes :
+Dans un second terminal, démarre le front statique :
 
-- `GET /health` indique si le backend tourne et quel appareil PyTorch utilise.
-- `POST /predict` reçoit une image PNG/JPEG dans le champ `file` et renvoie le chiffre prédit et sa confiance.
+```powershell
+.[0m\.venv\Scripts\python.exe -m http.server 5500 --directory frontend
+```
 
-La fenêtre Tkinter reste un prototype local. Le futur front navigateur enverra son dessin à cette même logique `predict_image` via l'API. Docker viendra ensuite, quand le contrat entre front et backend sera clair.
+Ouvre `http://127.0.0.1:5500` pour dessiner. Le front envoie un PNG à `POST /predict` sur l'API (`http://127.0.0.1:8000`). `http://127.0.0.1:8000/docs` reste disponible pour explorer l'API directement avec Swagger.
+
+L'API autorise actuellement le front local via CORS. Cette configuration de développement devra être ajustée quand le front et l'API seront déployés ou conteneurisés.
 
 ## Tests
 
@@ -65,10 +69,9 @@ python -m pip check
 
 ## Git, étape par étape
 
-La refactorisation a été fusionnée dans `main`. L'API est développée sur `feat/inference-api`. Après ses tests et sa pull request, les prochaines branches seront créées depuis le `main` mis à jour :
+La refactorisation et l'API sont fusionnées dans `main`. Le front est développé sur `feat/web-ui`. La prochaine étape sera `chore/docker`, après tests et pull request du front :
 
-1. `feat/web-ui` : créer une page de dessin avec prédiction en direct.
-2. `chore/docker` : conteneuriser le backend, puis définir comment lancer le front et l'API ensemble.
+1. `chore/docker` : conteneuriser le backend, puis définir comment lancer le front et l'API ensemble.
 
 Pour chaque branche : lancer les tests, examiner le contenu staged, committer, pousser la branche et ouvrir une pull request vers `main` avant de commencer l'étape suivante.
 

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Number Recognition | Dessin</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="workspace">
+    <header class="topbar">
+      <a class="wordmark" href="#" aria-label="Number Recognition, accueil">
+        <span class="mark" aria-hidden="true">N</span>
+        <span>number recognition</span>
+      </a>
+      <div class="api-status" id="api-status" data-state="checking">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="api-status-text">Connexion à l’API…</span>
+      </div>
+    </header>
+
+    <section class="drawing-panel" aria-labelledby="page-title">
+      <div class="intro">
+        <p class="eyebrow">Classification · MNIST</p>
+        <h1 id="page-title">Dessine un chiffre</h1>
+        <p class="instruction">Trace un chiffre de 0 à 9 dans la zone, puis demande au modèle de le reconnaître.</p>
+      </div>
+
+      <div class="canvas-shell">
+        <canvas id="drawing-canvas" width="280" height="280" aria-label="Zone de dessin pour un chiffre manuscrit"></canvas>
+        <span class="canvas-hint" id="canvas-hint">Commence à dessiner</span>
+      </div>
+
+      <div class="actions">
+        <button class="button button-secondary" id="clear-button" type="button">Effacer</button>
+        <button class="button button-primary" id="predict-button" type="button" disabled>Prédire <span aria-hidden="true">→</span></button>
+      </div>
+
+      <section class="result" id="result" aria-live="polite" hidden>
+        <div>
+          <p class="result-label" id="result-label">Prédiction du modèle</p>
+          <p class="result-message" id="result-message"></p>
+        </div>
+        <div class="result-digit" id="result-digit" aria-label="Chiffre prédit"></div>
+      </section>
+
+      <p class="error-message" id="error-message" role="alert" hidden></p>
+    </section>
+
+    <footer class="footer">
+      <span>CNN · PyTorch</span>
+      <span>API locale · <code>127.0.0.1:8000</code></span>
+    </footer>
+  </main>
+</body>
+</html>
