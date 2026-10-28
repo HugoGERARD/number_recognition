@@ -8,6 +8,7 @@ __pycache__/
 .mypy_cache/
 .DS_Store
 .env
+update.md
 
 # Jupyter
 *.nbconvert.ipynb
