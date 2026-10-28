@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68,<82"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "number-recognition"
+version = "0.1.0"
+description = "CNN for handwritten digit recognition with MNIST"
+requires-python = ">=3.11"
+dependencies = [
+    "Pillow>=9.0.0",
+    "torch>=2.2.0",
+    "torchvision>=0.17.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
