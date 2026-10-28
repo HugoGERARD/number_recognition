@@ -1,12 +1,15 @@
 import tempfile
 import unittest
+from io import BytesIO
 from pathlib import Path
 
 import torch
+from fastapi.testclient import TestClient
 from PIL import Image, ImageDraw
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
+from number_recognition.api import create_app
 from number_recognition.inference import predict_image, preprocess_image
 from number_recognition.model import DigitCNN, load_model, save_model
 from number_recognition.training import run_epoch
@@ -61,6 +64,30 @@ class NumberRecognitionTests(unittest.TestCase):
             model(torch.zeros(1, 1, 28, 28)).shape,
             restored_model(torch.zeros(1, 1, 28, 28)).shape,
         )
+
+    def test_api_health_and_png_prediction(self) -> None:
+        client = TestClient(create_app(ConstantClassifier(), torch.device("cpu")))
+        health_response = client.get("/health")
+        self.assertEqual(health_response.status_code, 200)
+        self.assertEqual(health_response.json()["status"], "ok")
+
+        image_buffer = BytesIO()
+        Image.new("L", (28, 28), color=255).save(image_buffer, format="PNG")
+        response = client.post(
+            "/predict",
+            files={"file": ("digit.png", image_buffer.getvalue(), "image/png")},
+        )
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertEqual(response.json()["digit"], 0)
+        self.assertAlmostEqual(response.json()["confidence"], 0.1, places=6)
+
+    def test_api_rejects_non_image_upload(self) -> None:
+        client = TestClient(create_app(ConstantClassifier(), torch.device("cpu")))
+        response = client.post(
+            "/predict",
+            files={"file": ("not-image.png", b"not an image", "image/png")},
+        )
+        self.assertEqual(response.status_code, 400)
 
 
 if __name__ == "__main__":
