@@ -89,6 +89,22 @@ class NumberRecognitionTests(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 400)
 
+    def test_api_allows_local_frontend_cors_preflight(self) -> None:
+        client = TestClient(create_app(ConstantClassifier(), torch.device("cpu")))
+        response = client.options(
+            "/predict",
+            headers={
+                "Origin": "http://127.0.0.1:5500",
+                "Access-Control-Request-Method": "POST",
+                "Access-Control-Request-Headers": "content-type",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.headers["access-control-allow-origin"],
+            "http://127.0.0.1:5500",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -4,6 +4,7 @@ from io import BytesIO
 from typing import Annotated
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel
 import torch
@@ -28,6 +29,12 @@ class PredictionResponse(BaseModel):
 def create_app(model: nn.Module, device: torch.device) -> FastAPI:
     """Create the API around an already-loaded model."""
     app = FastAPI(title="Number Recognition API", version="0.1.0")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://127.0.0.1:5500", "http://localhost:5500"],
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type"],
+    )
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
